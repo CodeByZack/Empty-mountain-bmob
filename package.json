@@ -1,8 +1,8 @@
 {
-  "name": "vue-admin-demo",
+  "name": "empty",
   "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "sxy <1783280315@qq.com>",
+  "description": "空山后台管理",
+  "author": "zackdk <958059970@qq.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

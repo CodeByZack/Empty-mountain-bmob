@@ -1,6 +1,6 @@
 <template>
     <section>
-        <el-col :span='12'  v-loading="loading">
+        <el-col :span='10'  v-loading="loading">
             <div class="titleTab">
                 新增文章/编辑文章            
             </div>
@@ -24,9 +24,14 @@
             </el-form>
             
         </el-col>
-        <el-col :span='12'>
-            <div class="titleTab">
-                预览文章            
+        <el-col :span='14'>
+            <div class="container" v-bind:style="{ backgroundImage: bgUrl}">
+                <div class="article_show">
+                <h1 class="aricle_title">{{nowarticle.title}}</h1>
+                <div class="aricle_author">{{nowarticle.author}}</div>
+                <div class="article_content" v-html="testContent">
+                </div>
+                </div>
             </div>
         </el-col>      
     </section>    
@@ -98,10 +103,10 @@
             },
             selectFile(){
                 const pic = this.$refs.selectfile.files
+                //todo 统一文件名规范
                 this.loading = true;
                 Bmob.saveFile(pic)
                 .then(res=>{
-                    console.log(res);
                     this.loading = false;
                     this.nowarticle.img_url = res[0].url;
                 })
@@ -112,30 +117,87 @@
             }
         },
         mounted(){
-            let routerParams = this.$route.params.dataObj
+            let routerParams = this.$route.params.dataObj;
             if(routerParams){
                 this.btnMsg = '确认修改';
+                // 将数据放在当前组件的数据内
+                this.nowarticle.title = routerParams.title;
+                this.nowarticle.author = routerParams.author;
+                this.nowarticle.content = routerParams.content;
+                this.nowarticle.img_url = routerParams.img;
+                this.nowarticle.objectId = routerParams.objectId;
+            }else{
+                this.btnMsg = '确认提交';
             }
-            // 将数据放在当前组件的数据内
-            this.nowarticle.title = routerParams.title;
-            this.nowarticle.author = routerParams.author;
-            this.nowarticle.content = routerParams.content;
-            this.nowarticle.img_url = routerParams.img;
-            this.nowarticle.objectId = routerParams.objectId;
+        },
+        computed:{
+            bgUrl(){
+                return 'url('+this.nowarticle.img_url+')';
+            },
+            testContent(){
+                if(this.nowarticle.content){
+                    let temp = this.nowarticle.content;
+                    temp = temp.replace(/\n/g,'</p><p>');
+                    temp = '<p>'+temp+'</p>';
+                    return temp;
+                }else{
+                    return '';
+                }
+            }
         }
     }
     
 </script>
 
-<style>
-    .titleTab{
-        height:30px;
-        font-size:20px;
-        margin:20px 0;
-        text-align:center;
-    }
-    .center{
-        margin-top:30px;
-        text-align:center;
-    }
+<style scoped>
+.titleTab{
+    height:30px;
+    font-size:20px;
+    margin:20px 0;
+    text-align:center;
+}
+.center{
+    margin-top:30px;
+    text-align:center;
+}
+.container{
+	padding:40px 8px;
+	width: 90%;
+	margin: 0px auto;
+	background-size: cover;
+    background-repeat: no-repeat;
+	border-radius: 5px;
+}
+.container .article_show{
+	padding: 20px;
+	width: 80%;
+    margin: 0 auto;
+    background-color: #fff;
+	border: 1px dashed #dddddd;
+
+}
+
+
+.container .article_show .aricle_title{
+	text-align: center;
+    color: #000000;
+    font-weight: normal;
+    letter-spacing: 4px;	
+    
+}
+.container .article_show .aricle_author{
+	text-align: center;
+	color: #999999;
+	line-height: 30px;
+	font-size: 16px;
+	margin: 0;
+}
+.container .article_show .article_content /deep/ p{
+    color: #000;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 30px;
+    margin-bottom: 30px;
+    text-align: justify;	
+}
 </style>
