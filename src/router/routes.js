@@ -1,6 +1,7 @@
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import article from '../components/nav1/article.vue'
+import comments from '../components/nav1/comments.vue'
 import articlePicture from '../components/nav1/articlePicture.vue'
 import voice from '../components/nav2/voice.vue'
 import VueRouter from 'vue-router'
@@ -19,6 +20,7 @@ let routes = [
         iconCls: 'el-icon-message',//图标样式class
         children: [
             { path: '/article', component: article, name: '文章列表' },
+            { path: '/comments', component: comments, name: '文章评论' },
             { path: '/articlePicture', component: articlePicture, name: '文章新增/编辑' }
         ]
 	},

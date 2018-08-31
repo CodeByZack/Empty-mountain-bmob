@@ -9,9 +9,43 @@ let BmobInstance = {};
 
 BmobInstance.instance = Bmob;
 
+//登录操作
 BmobInstance.login = function(username,password){
     return Bmob.User.login(username,password);
 }
+
+
+//评论相关api
+//获取评论
+BmobInstance.getCommentsByPage = function(page){
+    const query = Bmob.Query("comments");
+    query.include('own','articleId')
+    query.order("-updatedAt");
+    query.limit(10);
+    query.skip(10*(page-1));
+    return query.find();
+}
+//统计评论总条数
+BmobInstance.countComments = function(){
+    const query = Bmob.Query('comments');
+    return query.count();
+}
+//增加评论
+BmobInstance.addComments = function(comment){
+    const query = Bmob.Query("comments");
+    query.set("content",comment.content);
+    const pointer = Bmob.Pointer('Articles');
+    const poiID = pointer.set(comment.objectId);
+    query.set("articleId",poiID);
+    return query.save();
+}
+//删除评论
+BmobInstance.delComments = function(objectId){
+    const query = Bmob.Query("comments");
+    return query.destroy(objectId);
+}
+
+
 
 BmobInstance.queryArticleByPage = function(page){
     const query = Bmob.Query("Articles");
@@ -27,6 +61,8 @@ BmobInstance.countArticles = function(){
 BmobInstance.addArticle = function(article){
     const query = Bmob.Query('Articles');
     query.set("title",article.title);
+    //增加权限，只有一个账号拥有写权限
+    query.set('ACL',{"*":{"read":true},"lCSZ4447":{"read":true,"write":true}});
     query.set("img",article.img_url);
     query.set("author",article.author);
     query.set("content",article.content);
